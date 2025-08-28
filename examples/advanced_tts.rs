@@ -1,4 +1,4 @@
-use elevenlabs_tts::{ElevenLabsClient, VoiceSettings, models, voices};
+use elevenlabs_tts::{ElevenLabsTTSClient, VoiceSettings, models, voices};
 use std::env;
 
 #[tokio::main]
@@ -8,7 +8,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         env::var("ELEVENLABS_API_KEY").expect("Please set ELEVENLABS_API_KEY environment variable");
 
     println!("Creating ElevenLabs client...");
-    let client = ElevenLabsClient::new(api_key);
+    let client = ElevenLabsTTSClient::new(api_key);
 
     // Test basic TTS with new voice API
     println!(
@@ -17,11 +17,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     // Example prompt text
+
+    let voice_settings = VoiceSettings::new(0.5, 0.85)
+        .with_style(0.5)
+        .with_speaker_boost(true);
+
     let prompt = "Life feels lighter when you slow down, take a deep breath, and notice the small details around you.";
+
     let audio = client
         .text_to_speech(prompt)
         // Set voice settings
-        .voice_settings(VoiceSettings::new(1.0, 0.9)) // Use default voice settings
+        .voice_settings(voice_settings) // Use default voice settings
         .voice(&voices::all_voices::IVANA) // Use StaticVoice reference
         .model(models::elevanlabs_models::ELEVEN_V3)
         .execute()

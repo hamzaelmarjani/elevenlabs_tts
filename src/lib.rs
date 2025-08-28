@@ -5,11 +5,11 @@
 //! # Quick Start
 //!
 //! ```rust,no_run
-//! use elevenlabs_tts::ElevenLabsClient;
+//! use elevenlabs_tts::ElevenLabsTTSClient;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let client = ElevenLabsClient::new("your-api-key");
+//!     let client = ElevenLabsTTSClient::new("your-api-key");
 //!     
 //!     let audio = client
 //!         .text_to_speech("Hello, world!")
@@ -31,18 +31,18 @@ pub mod models;
 pub mod types;
 pub mod voices;
 
-pub use error::ElevenLabsError;
+pub use error::ElevenLabsTTSError;
 pub use types::*;
 
 /// Main client for interacting with ElevenLabs API
 #[derive(Clone)]
-pub struct ElevenLabsClient {
+pub struct ElevenLabsTTSClient {
     client: Client,
     api_key: String,
     base_url: String,
 }
 
-impl ElevenLabsClient {
+impl ElevenLabsTTSClient {
     /// Create a new ElevenLabs client with API key
     pub fn new<S: Into<String>>(api_key: S) -> Self {
         Self {
@@ -70,7 +70,7 @@ impl ElevenLabsClient {
     pub(crate) async fn execute_tts(
         &self,
         request: TtsRequest,
-    ) -> Result<Vec<u8>, ElevenLabsError> {
+    ) -> Result<Vec<u8>, ElevenLabsTTSError> {
         let url = format!("{}/text-to-speech/{}", self.base_url, request.voice_id);
 
         let response = self
@@ -83,7 +83,7 @@ impl ElevenLabsClient {
             .await?;
 
         if !response.status().is_success() {
-            return Err(ElevenLabsError::ApiError {
+            return Err(ElevenLabsTTSError::ApiError {
                 status: response.status().as_u16(),
                 message: response.text().await.unwrap_or_default(),
             });
@@ -95,7 +95,7 @@ impl ElevenLabsClient {
 
 /// Builder for text-to-speech requests
 pub struct TextToSpeechBuilder {
-    client: ElevenLabsClient,
+    client: ElevenLabsTTSClient,
     text: String,
     voice_id: Option<String>,
     model_id: Option<String>,
@@ -103,7 +103,7 @@ pub struct TextToSpeechBuilder {
 }
 
 impl TextToSpeechBuilder {
-    fn new(client: ElevenLabsClient, text: String) -> Self {
+    fn new(client: ElevenLabsTTSClient, text: String) -> Self {
         Self {
             client,
             text,
@@ -142,7 +142,7 @@ impl TextToSpeechBuilder {
     }
 
     /// Execute the text-to-speech request
-    pub async fn execute(self) -> Result<Vec<u8>, ElevenLabsError> {
+    pub async fn execute(self) -> Result<Vec<u8>, ElevenLabsTTSError> {
         let voice_id = self
             .voice_id
             .unwrap_or_else(|| voices::all_voices::RACHEL.voice_id.to_string()); // Default to Rachel
@@ -166,13 +166,13 @@ mod tests {
 
     #[tokio::test]
     async fn test_client_creation() {
-        let client = ElevenLabsClient::new("test-key");
+        let client = ElevenLabsTTSClient::new("test-key");
         assert_eq!(client.api_key, "test-key");
     }
 
     #[test]
     fn test_builder_pattern() {
-        let client = ElevenLabsClient::new("test-key");
+        let client = ElevenLabsTTSClient::new("test-key");
         let builder = client
             .text_to_speech("Hello")
             .voice_id("voice-123")

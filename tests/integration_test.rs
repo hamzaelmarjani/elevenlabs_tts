@@ -1,15 +1,15 @@
-use elevenlabs_tts::{ElevenLabsClient, ElevenLabsError, VoiceSettings, models, voices};
+use elevenlabs_tts::{ElevenLabsTTSClient, ElevenLabsTTSError, VoiceSettings, models, voices};
 
 #[tokio::test]
 async fn test_client_creation() {
-    let _client = ElevenLabsClient::new("test-api-key");
+    let _client = ElevenLabsTTSClient::new("test-api-key");
     // Just test that it doesn't panic
     assert_eq!(true, true);
 }
 
 #[tokio::test]
 async fn test_builder_pattern() {
-    let client = ElevenLabsClient::new("test-key");
+    let client = ElevenLabsTTSClient::new("test-key");
     let _builder = client
         .text_to_speech("Hello world")
         .voice_id(voices::all_voices::RACHEL.voice_id)
@@ -55,7 +55,7 @@ fn test_default_voice_settings() {
 
 #[test]
 fn test_error_display() {
-    let error = ElevenLabsError::ValidationError("Invalid voice ID".to_string());
+    let error = ElevenLabsTTSError::ValidationError("Invalid voice ID".to_string());
     let display = format!("{}", error);
     assert!(display.contains("Validation error"));
     assert!(display.contains("Invalid voice ID"));
@@ -111,7 +111,7 @@ fn test_voice_search() {
 
 #[tokio::test]
 async fn test_builder_with_voice_reference() {
-    let client = ElevenLabsClient::new("test-key");
+    let client = ElevenLabsTTSClient::new("test-key");
     let _builder = client
         .text_to_speech("Hello world")
         .voice(&voices::all_voices::RACHEL) // Test new voice API
@@ -128,7 +128,7 @@ mod mock_tests {
 
     #[tokio::test]
     async fn test_invalid_api_key_error() {
-        let _client = ElevenLabsClient::new("invalid-key");
+        let _client = ElevenLabsTTSClient::new("invalid-key");
 
         // This would normally fail with auth error, but we can't test without real API
         // In a real test, you'd use a mock HTTP server like wiremock
