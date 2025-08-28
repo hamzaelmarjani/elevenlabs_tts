@@ -12,7 +12,7 @@ A type-safe, async Rust client for the [ElevenLabs Text-to-Speech API](https://e
 - **Builder Pattern**: Intuitive, chainable API for configuring TTS requests
 - **Predefined Voices**: Access to static voice definitions (`voices::all_voices::*`)
 - **Model Support**: Full support for ElevenLabs models (`models::elevenlabs_models::*`)
-- **Customizable**: Voice settings, custom base URLs, and enterprise support
+- **Customizable**: Voice settings, Elevanlabs TTS APIs, custom base URLs, and enterprise support
 - **Tokio Ready**: Works seamlessly with the Tokio runtime
 
 ## Installation
@@ -21,7 +21,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-elevenlabs_tts = "0.0.2"
+elevenlabs_tts = "0.1.0"
 ```
 
 ## Quick Start
@@ -87,24 +87,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = env::var("ELEVENLABS_API_KEY")?;
     let client = ElevenLabsTTSClient::new(api_key);
 
-    // Customize voice settings for more control
-    // Stability: 0.5 (50%)
-    // Similarity: 0.85 (85%)
-    // Style Exaggeration: 0.5 (50%)
-    // Speaker boost: true
-    let voice_settings = VoiceSettings::new(0.5, 0.85)
-        .with_style(0.5)
-        .with_speaker_boost(true);
+    let voice_settings = VoiceSettings::default()
+        .style(0.3)
+        .speaker_boost(false)
+        .speed(1.05);
 
     let prompt = "Life feels lighter when you slow down, take a deep breath, and notice the small details around you.";
 
     let audio = client
         .text_to_speech(prompt)
-        .voice_settings(voice_settings)
-        .voice(&voices::all_voices::ARNOLD) // Arnold Voice
-        .model(models::elevanlabs_models::ELEVEN_MULTILINGUAL_V2) // Eleven Multilingual v2
+        .voice_settings(voice_settings.clone())
+        .voice(&voices::all_voices::IVANA)
+        .model(models::elevanlabs_models::ELEVEN_FLASH_V2_5)
+        .language_code("fr")
+        .output_format("mp3_44100_192")
+        .seed(4000)
         .execute()
         .await?;
+
 
     std::fs::create_dir_all("outputs")?;
     std::fs::write("outputs/advanced_output.mp3", audio)?;
@@ -128,15 +128,28 @@ cargo run --example advanced_tts
 
 ## API Overview
 
-| Method                                                                                                | Description                               |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `ElevenLabsTTSClient::new(api_key)`                                                                   | Create a new client instance              |
-| `.text_to_speech(text)`                                                                               | Start building a TTS request              |
-| `.voice(&voices::all_voices::RACHEL)`                                                                 | Use a predefined static voice             |
-| `.voice_id("custom-id")`                                                                              | Use a custom voice ID                     |
-| `.model(models::elevenlabs_models::ELEVEN_MULTILINGUAL_V2)`                                           | Select an ElevenLabs model                |
-| `.voice_settings(VoiceSettings::new(stability, similarity).with_style(0.5).with_speaker_boost(true))` | Fine-tune voice parameters                |
-| `.execute()`                                                                                          | Execute the request and return audio data |
+| Method                                                                                                | Description                   |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `ElevenLabsTTSClient::new(api_key)`                                                                   | Create client instance        |
+| `.text_to_speech(text)`                                                                               | Build a TTS request           |
+| `.voice(&voices::all_voices::RACHEL)`                                                                 | Use a static voice            |
+| `.voice_id("custom-id")`                                                                              | Use custom voice ID           |
+| `.model(models::elevenlabs_models::ELEVEN_MULTILINGUAL_V2)`                                           | Select model                  |
+| `.voice_settings(VoiceSettings::new(stability, similarity).with_style(0.5).with_speaker_boost(true))` | Fine-tune voice params        |
+| `.execute()`                                                                                          | Run request → audio           |
+| `TtsRequest { text }`                                                                                 | Input text                    |
+| `voice_id`                                                                                            | Voice ID (path param)         |
+| `output_format`                                                                                       | Audio format (e.g. mp3_44100) |
+| `model_id`                                                                                            | Model ID                      |
+| `language_code`                                                                                       | Force language/accent         |
+| `seed`                                                                                                | Deterministic sampling        |
+| `previous_text`                                                                                       | Improve continuity (before)   |
+| `next_text`                                                                                           | Improve continuity (after)    |
+| `previous_request_ids`                                                                                | Continuity prev. requests     |
+| `next_request_ids`                                                                                    | Continuity next requests      |
+| `apply_text_normalization`                                                                            | Normalize text (auto/on/off)  |
+| `apply_language_text_normalization`                                                                   | Lang-specific normalization   |
+| `voice_settings`                                                                                      | Override voice settings       |
 
 ## Error Handling
 

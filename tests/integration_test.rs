@@ -21,36 +21,12 @@ async fn test_builder_pattern() {
 
 #[test]
 fn test_voice_settings() {
-    let settings = VoiceSettings::new(0.7, 0.9);
-    assert_eq!(settings.stability, 0.7);
-    assert_eq!(settings.similarity_boost, 0.9);
-    assert_eq!(settings.style, None);
-    assert_eq!(settings.use_speaker_boost, None);
-}
-
-#[test]
-fn test_voice_settings_clamping() {
-    // Test that values are clamped to 0.0-1.0
-    let settings = VoiceSettings::new(-0.5, 1.5);
-    assert_eq!(settings.stability, 0.0);
-    assert_eq!(settings.similarity_boost, 1.0);
-}
-
-#[test]
-fn test_voice_settings_with_style() {
-    let settings = VoiceSettings::new(0.5, 0.8)
-        .with_style(0.6)
-        .with_speaker_boost(true);
-
-    assert_eq!(settings.style, Some(0.6));
-    assert_eq!(settings.use_speaker_boost, Some(true));
-}
-
-#[test]
-fn test_default_voice_settings() {
-    let settings = VoiceSettings::default();
-    assert_eq!(settings.stability, 0.5);
-    assert_eq!(settings.similarity_boost, 0.8);
+    let settings = VoiceSettings::new(Some(0.7), Some(0.9), Some(0.3), Some(false), Some(1.0));
+    assert_eq!(settings.stability, Some(0.7));
+    assert_eq!(settings.similarity_boost, Some(0.9));
+    assert_eq!(settings.style, Some(0.3));
+    assert_eq!(settings.use_speaker_boost, Some(false));
+    assert_eq!(settings.speed, Some(1.0));
 }
 
 #[test]

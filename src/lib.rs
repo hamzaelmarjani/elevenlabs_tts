@@ -99,6 +99,15 @@ pub struct TextToSpeechBuilder {
     text: String,
     voice_id: Option<String>,
     model_id: Option<String>,
+    output_format: Option<String>,
+    language_code: Option<String>,
+    seed: Option<u32>,
+    previous_text: Option<String>,
+    next_text: Option<String>,
+    previous_request_ids: Option<Vec<String>>,
+    next_request_ids: Option<Vec<String>>,
+    apply_text_normalization: Option<String>,
+    apply_language_text_normalization: Option<bool>,
     voice_settings: Option<VoiceSettings>,
 }
 
@@ -109,6 +118,15 @@ impl TextToSpeechBuilder {
             text,
             voice_id: None,
             model_id: None,
+            output_format: None,
+            language_code: None,
+            seed: None,
+            previous_text: None,
+            next_text: None,
+            previous_request_ids: None,
+            next_request_ids: None,
+            apply_text_normalization: None,
+            apply_language_text_normalization: None,
             voice_settings: None,
         }
     }
@@ -125,19 +143,75 @@ impl TextToSpeechBuilder {
         self
     }
 
+    /// Set the output format to use
+    pub fn output_format<S: Into<String>>(mut self, output_format: S) -> Self {
+        self.output_format = Some(output_format.into());
+        self
+    }
+
     /// Set the model to use
     pub fn model<S: Into<String>>(mut self, model_id: S) -> Self {
         self.model_id = Some(model_id.into());
         self
     }
 
-    /// Set voice settings (stability, similarity_boost, etc.)
-    pub fn voice_settings(mut self, settings: VoiceSettings) -> Self {
-        if settings.stability != 0.0 && settings.stability != 0.5 && settings.stability != 1.0 {
-            panic!("Invalid stability value. Must be one of: 0.0, 0.5, 1.0");
-        }
+    /// Set the language code to use
+    pub fn language_code<S: Into<String>>(mut self, language_code: S) -> Self {
+        self.language_code = Some(language_code.into());
+        self
+    }
 
+    /// Set voice settings (stability, similarity_boost, style, user_speaker_boost and speed).
+    pub fn voice_settings(mut self, settings: VoiceSettings) -> Self {
         self.voice_settings = Some(settings);
+        self
+    }
+
+    /// Set seeds to use
+    pub fn seed(mut self, seed: u32) -> Self {
+        self.seed = Some(seed);
+        self
+    }
+
+    /// Set the previous text
+    pub fn previous_text<S: Into<String>>(mut self, previous_text: S) -> Self {
+        self.previous_text = Some(previous_text.into());
+        self
+    }
+
+    /// Set the next text
+    pub fn next_text<S: Into<String>>(mut self, next_text: S) -> Self {
+        self.next_text = Some(next_text.into());
+        self
+    }
+
+    /// Set the prebious requests ids
+    pub fn previous_request_ids<S: Into<Vec<String>>>(mut self, previous_request_ids: S) -> Self {
+        self.previous_request_ids = Some(previous_request_ids.into());
+        self
+    }
+
+    /// Set the next text to use
+    pub fn next_request_ids<S: Into<Vec<String>>>(mut self, next_request_ids: S) -> Self {
+        self.next_request_ids = Some(next_request_ids.into());
+        self
+    }
+
+    /// Set the apply text normalization
+    pub fn apply_text_normalization<S: Into<String>>(
+        mut self,
+        apply_text_normalization: S,
+    ) -> Self {
+        self.apply_text_normalization = Some(apply_text_normalization.into());
+        self
+    }
+
+    /// Set the apply language text normalization
+    pub fn apply_language_text_normalization<B: Into<bool>>(
+        mut self,
+        apply_language_text_normalization: B,
+    ) -> Self {
+        self.apply_language_text_normalization = Some(apply_language_text_normalization.into());
         self
     }
 
@@ -145,15 +219,34 @@ impl TextToSpeechBuilder {
     pub async fn execute(self) -> Result<Vec<u8>, ElevenLabsTTSError> {
         let voice_id = self
             .voice_id
-            .unwrap_or_else(|| voices::all_voices::RACHEL.voice_id.to_string()); // Default to Rachel
+            .unwrap_or_else(|| voices::all_voices::RACHEL.voice_id.to_string()); // Default to: Rachel
+
+        let output_format = self
+            .output_format
+            .unwrap_or_else(|| "mp3_44100_128".to_string()); // Default to: mp3_44100_128
 
         let request = TtsRequest {
             text: self.text,
             voice_id: voice_id.clone(),
+            output_format: Some(output_format.clone()),
             model_id: self
                 .model_id
-                .unwrap_or_else(|| models::elevanlabs_models::ELEVEN_MULTILINGUAL_V2.to_string()), // Default to eleven_monolingual_v2
-            voice_settings: self.voice_settings.unwrap_or_default(),
+                .unwrap_or_else(|| models::elevanlabs_models::ELEVEN_MULTILINGUAL_V2.to_string()), // Default to: eleven_multilingual_v2
+            language_code: self.language_code.or(None), // Default to null
+            voice_settings: self.voice_settings.unwrap_or_default(), // Default voice settings
+            seed: self.seed.or(None),                   // Default to null
+            previous_text: self.previous_text.or(None), // Default to null
+            next_text: self.next_text.or(None),         // Default to null
+            previous_request_ids: self.previous_request_ids.or(None), // Default to null
+            next_request_ids: self.next_request_ids.or(None), // Default to null
+            apply_text_normalization: Some(
+                self.apply_text_normalization
+                    .unwrap_or_else(|| "auto".to_string()),
+            ), // Default to: auto
+            apply_language_text_normalization: Some(
+                self.apply_language_text_normalization
+                    .unwrap_or_else(|| false),
+            ), // Default to: false
         };
 
         self.client.execute_tts(request).await
