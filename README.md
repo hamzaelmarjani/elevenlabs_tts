@@ -35,8 +35,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let audio = client
         .text_to_speech("Hello, world!")
-        .voice_id("21m00Tcm4TlvDq8ikWAM") // Rachel voice
-        .model("eleven_monolingual_v1")
+        .voice(&voices::all_voices::ARNOLD) // Arnold Voice
+        .model(models::elevanlabs_models::ELEVEN_MULTILINGUAL_V2) // Eleven Multilingual v2
         .execute()
         .await?;
 
