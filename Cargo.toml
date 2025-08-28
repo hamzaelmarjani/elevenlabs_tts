@@ -5,8 +5,14 @@ edition = "2024"
 description = "Type-safe Rust client for ElevenLabs Text-to-Speech API"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/hamzaelmarjani/elevenlabs_tts"
-keywords = ["elevenlabs", "tts", "audio", "api", "speech", "text to speech"]
-categories = ["api-bindings", "multimedia::audio"]
+keywords = [
+    "elevenlabs",
+    "elevenlabs_tts",
+    "elevenlabs_api",
+    "elevenlabs_rs",
+    "text-to-speech",
+]
+categories = ["api-bindings", "multimedia::audio", "network-programming"]
 
 [dependencies]
 tokio = { version = "1.47", features = ["full"] }
