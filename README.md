@@ -128,28 +128,24 @@ cargo run --example advanced_tts
 
 ## API Overview
 
-| Method                                                                                                | Description                   |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `ElevenLabsTTSClient::new(api_key)`                                                                   | Create client instance        |
-| `.text_to_speech(text)`                                                                               | Build a TTS request           |
-| `.voice(&voices::all_voices::RACHEL)`                                                                 | Use a static voice            |
-| `.voice_id("custom-id")`                                                                              | Use custom voice ID           |
-| `.model(models::elevenlabs_models::ELEVEN_MULTILINGUAL_V2)`                                           | Select model                  |
-| `.voice_settings(VoiceSettings::new(stability, similarity).with_style(0.5).with_speaker_boost(true))` | Fine-tune voice params        |
-| `.execute()`                                                                                          | Run request → audio           |
-| `TtsRequest { text }`                                                                                 | Input text                    |
-| `voice_id`                                                                                            | Voice ID (path param)         |
-| `output_format`                                                                                       | Audio format (e.g. mp3_44100) |
-| `model_id`                                                                                            | Model ID                      |
-| `language_code`                                                                                       | Force language/accent         |
-| `seed`                                                                                                | Deterministic sampling        |
-| `previous_text`                                                                                       | Improve continuity (before)   |
-| `next_text`                                                                                           | Improve continuity (after)    |
-| `previous_request_ids`                                                                                | Continuity prev. requests     |
-| `next_request_ids`                                                                                    | Continuity next requests      |
-| `apply_text_normalization`                                                                            | Normalize text (auto/on/off)  |
-| `apply_language_text_normalization`                                                                   | Lang-specific normalization   |
-| `voice_settings`                                                                                      | Override voice settings       |
+| Method                                     | Description                                                      |
+| ------------------------------------------ | ---------------------------------------------------------------- |
+| `ElevenLabsTTSClient::new(String)`         | Create client instance (required)\*                              |
+| `.text_to_speech(String)`                  | Build a TTS request (required)\*                                 |
+| `.voice(String)`                           | Use a static voice (optional)                                    |
+| `.voice_id(String)`                        | Use custom voice ID (optional)                                   |
+| `.model(String)`                           | Select model (optional)                                          |
+| `.voice_settings(VoiceSettings)`           | Fine-tune voice params (optional)                                |
+| `.output_format(String)`                   | Audio format (e.g. mp3_44100) (optional)                         |
+| `.language_code(String)`                   | Force language pronounce/accent only (no translation) (optional) |
+| `.seed(u32)`                               | Deterministic sampling (optional)                                |
+| `.previous_text(String)`                   | Improve continuity (before) (optional)                           |
+| `.next_text(String)`                       | Improve continuity (after) (optional)                            |
+| `.previous_request_ids(Vec<String>)`       | Continuity previous requests (optional)                          |
+| `.next_request_ids(Vec<String>)`           | Continuity next requests (optional)                              |
+| `.apply_text_normalization(String)`        | Normalize text (auto/on/off) (optional)                          |
+| `.apply_language_text_normalization(bool)` | Lang-specific normalization (optional)                           |
+| `.execute()`                               | Run request → audio (required)\*                                 |
 
 ## Error Handling
 
