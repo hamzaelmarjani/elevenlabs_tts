@@ -1,0 +1,27 @@
+[package]
+name = "elevenlabs_tts"
+version = "0.0.1"
+edition = "2024"
+description = "Type-safe Rust client for ElevenLabs Text-to-Speech API"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/hamzaelmarjani/elevenlabs_tts"
+keywords = ["elevenlabs", "tts", "audio", "api", "speech", "text to speech"]
+categories = ["api-bindings", "multimedia::audio"]
+
+[dependencies]
+tokio = { version = "1.47", features = ["full"] }
+reqwest = { version = "0.11", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.143"
+chrono = "0.4.41"
+
+[dev-dependencies]
+tokio-test = "0.4.4"
+
+[[example]]
+name = "basic_tts"
+required-features = []
+
+[[example]]
+name = "advanced_tts"
+required-features = []
