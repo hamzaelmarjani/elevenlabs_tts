@@ -40,6 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Generated {} bytes of french audio", audio.len());
 
     // Save to file to outputs directory:
+    std::fs::create_dir_all("outputs")?;
     let audio_id = chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0);
     let file_name = format!("outputs/{}.mp3", audio_id);
     std::fs::write(file_name.clone(), &audio)?;
