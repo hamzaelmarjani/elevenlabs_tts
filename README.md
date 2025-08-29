@@ -18,6 +18,7 @@ A type-safe, async Rust client for the [ElevenLabs Text-to-Speech API](https://e
 ## Check-out Also:
 
 - **[Elevenlabs SFX](https://github.com/hamzaelmarjani/elevenlabs_sfx)**: A type-safe, async Rust client for the ElevenLabs Sound Effects API.
+- **[Elevenlabs STT](https://github.com/hamzaelmarjani/elevenlabs_stt)**: A type-safe, async Rust client for the ElevenLabs Speech To Text API.
 
 ## Installation
 
