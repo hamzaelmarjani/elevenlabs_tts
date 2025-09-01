@@ -1,6 +1,6 @@
 [package]
 name = "elevenlabs_tts"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
 description = "Type-safe Rust client for ElevenLabs Text-to-Speech API"
 license = "MIT OR Apache-2.0"
