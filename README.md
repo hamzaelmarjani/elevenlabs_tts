@@ -35,7 +35,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-elevenlabs_tts = "0.1.5"
+elevenlabs_tts = "0.2.0"
 ```
 
 ## Quick Start

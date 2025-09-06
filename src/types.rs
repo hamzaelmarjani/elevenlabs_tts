@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 /// Request body for text-to-speech API calls
 #[derive(Debug, Clone, Serialize)]
-pub struct TtsRequest {
+pub struct TTSRequest {
     pub text: String,
     #[serde(skip_serializing)]
     // ID of the voice to be used. Use the Get voices: https://elevenlabs.io/docs/api-reference/voices/search endpoint list all the available voices.

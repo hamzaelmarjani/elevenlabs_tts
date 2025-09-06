@@ -69,7 +69,7 @@ impl ElevenLabsTTSClient {
     /// Internal method to execute TTS request
     pub(crate) async fn execute_tts(
         &self,
-        request: TtsRequest,
+        request: TTSRequest,
     ) -> Result<Vec<u8>, ElevenLabsTTSError> {
         let url = format!("{}/text-to-speech/{}", self.base_url, request.voice_id);
 
@@ -225,7 +225,7 @@ impl TextToSpeechBuilder {
             .output_format
             .unwrap_or_else(|| "mp3_44100_128".to_string()); // Default to: mp3_44100_128
 
-        let request = TtsRequest {
+        let request = TTSRequest {
             text: self.text,
             voice_id: voice_id.clone(),
             output_format: Some(output_format.clone()),
